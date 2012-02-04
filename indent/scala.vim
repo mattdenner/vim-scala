@@ -75,7 +75,7 @@ function! ScalaIndent()
   let closebracepos = match(getline(v:lnum), '}')
   if closebracepos != -1
     call cursor(v:lnum, closebracepos+1) " Position on the brace for correct matching
-    let matchline = searchpair('\%(match\|if\|for\|while\)[^\{]\+{', '', '}', 'bW')
+    let matchline = searchpair('{', '', '}', 'bW')
     if matchline > 0
       return indent(matchline)
     endif
@@ -91,7 +91,7 @@ function! ScalaIndent()
     return indent       " case followed by case means no indentation change
   elseif previouscase != -1 && match(previousline, '=>\s*$') != -1
     let indent = indent + &shiftwidth
-  elseif currentcase != -1 && match(previousline, '\smatch\s*{') == -1
+  elseif currentcase != -1 && match(previousline, '\s\(match\s*{\|}\)') == -1
     return indent - &shiftwidth
   endif
 
@@ -99,9 +99,11 @@ function! ScalaIndent()
   "" aren't stupid enough to make a multiline single line loop without braces!
   "" Nested loops should work, but don't count on it, especially for mixed
   "" single & multiline loops!
-  let loopmatch = '^\s\+\(for\|while\|if\)\s*([^{]\+$'
+  let loopmatch = '^\s*\(for\|while\|if\)\s*([^{]\+$'
   if match(getline(v:lnum-1), loopmatch) != -1
-    let indent = indent + &shiftwidth
+    return indent + &shiftwidth
+  elseif match(getline(v:lnum-1), '^\s*else\s*$') != -1
+    return indent + &shiftwidth
   else
     let loopline = prevnonblank(v:lnum - 1)
     while match(getline(loopline-1), loopmatch) != -1
@@ -109,6 +111,30 @@ function! ScalaIndent()
       let loopline = loopline - 1
     endwhile
   endif
+
+  "" Ok, so maybe we're part of an assignment: either the value being
+  "" assigned or following one.  The following one can come after a block, so
+  "" we need to account for that too.
+  let assignmentlnum = prevlnum
+  let assignmentline = previousline
+  let matcher = "=\s*$"
+  " \(\s*else\|=\)\s*$"
+
+  let closebracepos = match(assignmentline, '}')
+  if closebracepos != -1
+    call cursor(assignmentlnum, closebracepos+1) " Position on the brace for correct matching
+    let matchline = searchpair('{', '', '}', 'bW')
+    if matchline > 0 && match(getline(matchline-1), matcher) != -1
+      let assignmentlnum = matchline
+      let assignmentline = getline(assignmentlnum)
+    endif
+  endif
+  if match(assignmentline, matcher) != -1
+    return indent + &shiftwidth
+  elseif match(getline(assignmentlnum-1), matcher) != -1
+    return indent(assignmentlnum-1)
+  endif
+
 
   return indent
 endfunction
