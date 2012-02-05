@@ -45,9 +45,9 @@ hi link scalaClassSpecializer Normal
 syn keyword scalaMethodDefinition       def                                                nextgroup=scalaMethodName                 skipwhite
 syn keyword scalaVariableDefinition     var                                                nextgroup=scalaVariableName               skipwhite
 syn keyword scalaValueDefinition        val                                                nextgroup=scalaValueName                  skipwhite
-syn match   scalaMethodName             "[a-z][A-Za-z_]*"                        contained nextgroup=scalaMethodParamsDefinition
-syn match   scalaVariableName           "[a-z][A-Za-z_]*"                        contained
-syn match   scalaValueName              "[a-z][A-Za-z_]*"                        contained
+syn match   scalaMethodName             "\([a-z][A-Za-z_]*\|[+*/-]\)"            contained nextgroup=scalaMethodParamsDefinition     skipwhite
+syn match   scalaVariableName           "[a-z][A-Za-z]*\(_[A-Za-z]\)\?"          contained
+syn match   scalaValueName              "[a-z][A-Za-z]*\(_[A-Za-z]\)\?"          contained
 syn match   scalaMethodParamsDefinition "([^:]\+:[^,\)]\+\(,[^:]\+:[^,\)]\+\)*)" contained contains=scalaClassName,scalaVariableName skipwhite
 syn keyword scalaAnonymousValue         _
 syn match   scalaSymbol                 "'[a-z][A-Za-z_]*\(\s\)\@="
@@ -73,14 +73,16 @@ syn keyword scalaRepeat      do
 syn keyword scalaRepeat      while
 syn keyword scalaKeyword     new
 syn keyword scalaKeyword     with
-syn keyword scalaKeyword     to
 syn keyword scalaValidation  require
 syn keyword scalaValidation  assert
+syn keyword scalaRange       to
+syn keyword scalaRange       until
 
 hi link scalaConditional Conditional
 hi link scalaRepeat      Repeat
 hi link scalaKeyword     Keyword
 hi link scalaValidation  Keyword
+hi link scalaRange       Keyword
 
 "" Syntax for modifiers
 syn keyword scalaKeywordModifier abstract
@@ -120,9 +122,11 @@ hi link scalaMultiLineComment Comment
 
 "" Constants, of various types because Scala has several things that appear to
 "" be constants.
-syn match   scalaConstant    "[A-Z][A-Z0-9_]\+"
+syn match   scalaConstant    "[A-Z][A-Z0-9_]\+\([A-Za-z]\)\@!"
 syn keyword scalaConstant    Nil
 syn keyword scalaConstant    Symbol
+syn keyword scalaConstant    Unit
+syn match   scalaConstant    "\(^\|\s\)\zs()"
 
 hi link scalaConstant   Constant
 
@@ -157,6 +161,8 @@ syn match scalaIllegal  "+\{2,}\|-\{2,}"        " i++ & i-- are illegal
 syn match scalaIllegal  ":\{2,3}\s*$"           " ending line with '::' or '::'
 syn match scalaIllegal  "'[^\s]\{2,}'"          " 'string' is illegal
 syn match scalaIllegal  "0\(\o*[89]\o*\)\+"     " invalid octal number
+syn match scalaIllegal  "_:"                    " causes compiler error (needs whitespace!)
+syn match scalaIllegal  "ex:"                   " causes VIM error on syntax highlighting!
 
 hi link scalaIllegal    Error
 

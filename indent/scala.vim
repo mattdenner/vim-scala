@@ -91,7 +91,7 @@ function! ScalaIndent()
     return indent       " case followed by case means no indentation change
   elseif previouscase != -1 && match(previousline, '=>\s*$') != -1
     let indent = indent + &shiftwidth
-  elseif currentcase != -1 && match(previousline, '\s\(match\s*{\|}\)') == -1
+  elseif currentcase != -1 && match(previousline, '\s\(\(match\|catch\)\s*{\|}\)') == -1
     return indent - &shiftwidth
   endif
 
@@ -134,7 +134,6 @@ function! ScalaIndent()
   elseif match(getline(assignmentlnum-1), matcher) != -1
     return indent(assignmentlnum-1)
   endif
-
 
   return indent
 endfunction
