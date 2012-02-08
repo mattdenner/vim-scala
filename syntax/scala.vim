@@ -115,6 +115,7 @@ syn match   scalaLineComment      "//.*"                contains=scalaTodo
 syn region  scalaMultiLineComment start="/\*" end="\*/" contains=scalaTodo
 syn keyword scalaTodo             TODO                  contained
 syn keyword scalaTodo             FIXME                 contained
+syn keyword scalaTodo             NOTE                  contained
 
 hi link scalaTodo             Todo
 hi link scalaLineComment      Comment
@@ -124,8 +125,13 @@ hi link scalaMultiLineComment Comment
 "" be constants.
 syn match   scalaConstant    "[A-Z][A-Z0-9_]\+\([A-Za-z]\)\@!"
 syn keyword scalaConstant    Nil
+syn keyword scalaConstant    Null
 syn keyword scalaConstant    Symbol
 syn keyword scalaConstant    Unit
+syn keyword scalaConstant    Nothing
+syn keyword scalaConstant    Any
+syn keyword scalaConstant    AnyRef
+syn keyword scalaConstant    AnyVal
 syn match   scalaConstant    "\(^\|\s\)\zs()"
 
 hi link scalaConstant   Constant
@@ -134,6 +140,8 @@ hi link scalaConstant   Constant
 syn match   scalaOperator    "\s\zs\(&&\?\|||\?\|[+*/-]=\|<<\|>>>\?\|[=+*/%-]\)\(\s\)\@="
 syn match   scalaOperator    ":\{2,3}\(\s\)\@="
 syn match   scalaOperator    "!\|\~"
+syn match   scalaOperator    "++"
+syn match   scalaOperator    "##"
 syn match   scalaComparator  "\(==\|!=\|<=\?\|>=\?\)\(\s\)\@="
 syn match   scalaNumber      "\(0x\x\+\|0\o\+\|0[lL]\?\|\(\<\|-\)[1-9]\d*[lL]\?\)"
 syn match   scalaFloat       "-\?\d\+\.\d\+"
@@ -157,12 +165,13 @@ hi link scalaAttributed PreProc
 
 "" Catch some things that are illegal in Scala and that I'm likely to type
 "" frequently, coming from Java & Ruby and being slightly dumb sometimes!
-syn match scalaIllegal  "+\{2,}\|-\{2,}"        " i++ & i-- are illegal
-syn match scalaIllegal  ":\{2,3}\s*$"           " ending line with '::' or '::'
-syn match scalaIllegal  "'[^\s]\{2,}'"          " 'string' is illegal
-syn match scalaIllegal  "0\(\o*[89]\o*\)\+"     " invalid octal number
-syn match scalaIllegal  "_:"                    " causes compiler error (needs whitespace!)
-syn match scalaIllegal  "ex:"                   " causes VIM error on syntax highlighting!
+syn match scalaIllegal  "[a-z]\zs\(+\{2,}\|-\{2,}\)"      " i++ & i-- are illegal
+syn match scalaIllegal  "\(+\{2,}\|-\{2,}\)\([a-z]\)\@="  " ++i & --i are illegal
+syn match scalaIllegal  ":\{2,3}\s*$"                     " ending line with '::' or '::'
+syn match scalaIllegal  "'[^\s']\{2,}'"                   " 'string' is illegal
+syn match scalaIllegal  "0\(\o*[89]\o*\)\+"               " invalid octal number
+syn match scalaIllegal  "_:"                              " causes compiler error (needs whitespace!)
+syn match scalaIllegal  "ex:"                             " causes VIM error on syntax highlighting!
 
 hi link scalaIllegal    Error
 
