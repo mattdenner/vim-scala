@@ -4,10 +4,11 @@ and indentation with the following caveats:
 
 The syntax highlighting is there for me to learn the language and identify my mistakes, so some things appear to be odd:
 
-* I've made both `Symbol` and `Nil` constants, rather than having them picked up as class names, purely because I see these as different;
+* I've made various defined classes constants, rather than having them picked up as class names, purely because I see these as different;
 * You'll also notice that, at the moment, class names can be a little picky, using alphabetic camelcase: I've not required digits in there yet;
 * Numerics, in particular, may behave a bit oddly in highlighting but I believe I've caught the most common cases;
-* I like whitespace around things so sometimes you may find just adding that will make things highlight.
+* I like whitespace around things so sometimes you may find just adding that will make things highlight;
+* I've also got several common errors that I either make, or think I'll make, when writing Scala coming from other languages.
 
 The indentation code is a massive work in progress:
 
