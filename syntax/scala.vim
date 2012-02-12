@@ -49,7 +49,7 @@ syn match   scalaMethodName             "\([a-z][A-Za-z_]*\|[+*/-]\)"           
 syn match   scalaVariableName           "[a-z][A-Za-z]*\(_[A-Za-z]\)\?"          contained
 syn match   scalaValueName              "[a-z][A-Za-z]*\(_[A-Za-z]\)\?"          contained
 syn match   scalaMethodParamsDefinition "([^:]\+:[^,\)]\+\(,[^:]\+:[^,\)]\+\)*)" contained contains=scalaClassName,scalaVariableName skipwhite
-syn keyword scalaAnonymousValue         _
+syn match   scalaAnonymousValue         "_\*\?"
 syn match   scalaSymbol                 "'[a-z][A-Za-z_]*\(\s\)\@="
 
 hi link scalaMethodDefinition       Keyword
@@ -73,6 +73,7 @@ syn keyword scalaRepeat      do
 syn keyword scalaRepeat      while
 syn keyword scalaKeyword     new
 syn keyword scalaKeyword     with
+syn keyword scalaKeyword     this
 syn keyword scalaValidation  require
 syn keyword scalaValidation  assert
 syn keyword scalaRange       to
@@ -93,6 +94,7 @@ syn keyword scalaKeywordModifier lazy
 syn keyword scalaKeywordModifier private
 syn keyword scalaKeywordModifier protected
 syn keyword scalaKeywordModifier sealed
+syn match   scalaKeywordModifier "@unchecked"
 
 hi link scalaKeywordModifier Keyword
 
@@ -140,12 +142,11 @@ hi link scalaConstant   Constant
 syn match   scalaOperator    "\s\zs\(&&\?\|||\?\|[+*/-]=\|<<\|>>>\?\|[=+*/%-]\)\(\s\)\@="
 syn match   scalaOperator    ":\{2,3}\(\s\)\@="
 syn match   scalaOperator    "!\|\~"
-syn match   scalaOperator    "++"
-syn match   scalaOperator    "##"
-syn match   scalaComparator  "\(==\|!=\|<=\?\|>=\?\)\(\s\)\@="
+syn match   scalaOperator    "\s\zs\(++\|##\)\(\s\)\@="
+syn match   scalaComparator  "\s\zs\(==\|!=\|<=\?\|>=\?\)\(\s\)\@="
 syn match   scalaNumber      "\(0x\x\+\|0\o\+\|0[lL]\?\|\(\<\|-\)[1-9]\d*[lL]\?\)"
 syn match   scalaFloat       "-\?\d\+\.\d\+"
-syn match   scalaArrow       "\s\zs[=-]>\(\s\)\@="
+syn match   scalaArrow       "\s\zs\(<-\|=>\)\(\s\)\@="
 syn match   scalaAttributed  "@[^\s]+"
 syn keyword scalaBoolean     true
 syn keyword scalaBoolean     false
