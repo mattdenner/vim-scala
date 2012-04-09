@@ -8,14 +8,14 @@ syn case match
 syn sync minlines=50
 
 "" Syntax for package and import
-syn keyword scalaPackage               package                                                     nextgroup=scalaFullyQualifiedPackage                             skipwhite
-syn keyword scalaImport                import                                                      nextgroup=scalaFullyQualifiedPackage,scalaFullyQualifiedImport   skipwhite
-syn match   scalaFullyQualifiedPackage "[a-z][a-z0-9]*\(.[a-z][a-z0-9]*\)\+"             contained                                                                  skipwhite
-syn match   scalaFullyQualifiedImport  "[A-Za-z][A-Za-z0-9]*\(.[A-Za-z][A-Za-z0-9]*\)\+" contained nextgroup=scalaImportClass,scalaImportEverything,scalaMapImports skipwhite
-syn region  scalaMapImports            start="\.{" end="}"                                         contains=scalaMethodName,scalaClassName,scalaMap,scalaConstant   skipwhite
-syn match   scalaImportClass           "\.\([A-Z][a-z0-9]*\)\+"                          contained
-syn match   scalaImportEverything      "\._"                                             contained
-syn match   scalaMap                   "=>"                                              contained
+syn keyword scalaPackage               package                                                      nextgroup=scalaFullyQualifiedPackage                             skipwhite
+syn keyword scalaImport                import                                                       nextgroup=scalaFullyQualifiedPackage,scalaFullyQualifiedImport   skipwhite
+syn match   scalaFullyQualifiedPackage "[a-z][a-z0-9]*\(.[a-z][a-z0-9]*\)\+"              contained                                                                  skipwhite
+syn match   scalaFullyQualifiedImport  "[A-Za-z][A-Za-z0-9]*\(\.[A-Za-z][A-Za-z0-9]*\)\+" contained nextgroup=scalaImportClass,scalaImportEverything,scalaMapImports skipwhite
+syn region  scalaMapImports            start="\.{" end="}"                                          contains=scalaMethodName,scalaClassName,scalaMap,scalaConstant   skipwhite
+syn match   scalaImportClass           "\.\([A-Z][a-z0-9]*\)\+"                           contained
+syn match   scalaImportEverything      "\._"                                              contained
+syn match   scalaMap                   "=>"                                               contained
 
 hi link scalaPackage               Include
 hi link scalaImport                Include
@@ -45,10 +45,10 @@ hi link scalaClassSpecializer Normal
 syn keyword scalaMethodDefinition       def                                                nextgroup=scalaMethodName                 skipwhite
 syn keyword scalaVariableDefinition     var                                                nextgroup=scalaVariableName               skipwhite
 syn keyword scalaValueDefinition        val                                                nextgroup=scalaValueName                  skipwhite
-syn match   scalaMethodName             "\([a-z][A-Za-z_]*\|[+*/-]\)"            contained nextgroup=scalaMethodParamsDefinition     skipwhite
+syn match   scalaMethodName             "\([a-z][A-Za-z0-9_]*\|[+*/-]\)"         contained nextgroup=scalaMethodParamsDefinition     skipwhite
 syn match   scalaVariableName           "[a-z][A-Za-z]*\(_[A-Za-z]\)\?"          contained
-syn match   scalaValueName              "[a-z][A-Za-z]*\(_[A-Za-z]\)\?"          contained
-syn match   scalaMethodParamsDefinition "([^:]\+:[^,\)]\+\(,[^:]\+:[^,\)]\+\)*)" contained contains=scalaClassName,scalaVariableName skipwhite
+syn match   scalaValueName              "[A-Za-z][A-Za-z]*\(_[A-Za-z]\)\?"       contained
+syn match   scalaMethodParamsDefinition "([^:]\+:[^,\)]\+\(,[^:]\+:[^,\)]\+\)*)" contained contains=scalaFullyQualifiedImport,scalaClassSpecializer,scalaVariableName skipwhite
 syn match   scalaAnonymousValue         "_\*\?"
 syn match   scalaSymbol                 "'[a-z][A-Za-z_]*\(\s\)\@="
 
