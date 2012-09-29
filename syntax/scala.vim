@@ -27,6 +27,7 @@ hi link scalaMapImports            Identifier
 hi link scalaMap                   Keyword
 
 "" Syntax for class, object and traits
+syn keyword scalaType             type                                       nextgroup=scalaClassName        skipwhite
 syn keyword scalaClass            class                                      nextgroup=scalaClassName        skipwhite
 syn keyword scalaObject           object                                     nextgroup=scalaClassName        skipwhite
 syn keyword scalaTrait            trait                                      nextgroup=scalaClassName        skipwhite
@@ -34,6 +35,7 @@ syn keyword scalaExtend           extends                                    nex
 syn match   scalaClassName        "[^\s\.a-z]\zs\([A-Z][a-z]*\)\+"           nextgroup=scalaClassSpecializer skipwhite
 syn region  scalaClassSpecializer start="\[" end="\]"              contained contains=scalaClassName
 
+hi link scalaType             Keyword
 hi link scalaClass            Keyword
 hi link scalaObject           Keyword
 hi link scalaTrait            Keyword
@@ -42,13 +44,13 @@ hi link scalaClassName        Type
 hi link scalaClassSpecializer Normal
 
 "" Syntax for functions, variables & values.
-syn keyword scalaMethodDefinition       def                                                nextgroup=scalaMethodName                 skipwhite
-syn keyword scalaVariableDefinition     var                                                nextgroup=scalaVariableName               skipwhite
-syn keyword scalaValueDefinition        val                                                nextgroup=scalaValueName                  skipwhite
-syn match   scalaMethodName             "\([a-z][A-Za-z0-9_]*\|[+*/-]\)"         contained nextgroup=scalaMethodParamsDefinition     skipwhite
-syn match   scalaVariableName           "[a-z][A-Za-z]*\(_[A-Za-z]\)\?"          contained
-syn match   scalaValueName              "[A-Za-z][A-Za-z]*\(_[A-Za-z]\)\?"       contained
-syn match   scalaMethodParamsDefinition "([^:]\+:[^,\)]\+\(,[^:]\+:[^,\)]\+\)*)" contained contains=scalaFullyQualifiedImport,scalaClassSpecializer,scalaVariableName skipwhite
+syn keyword scalaMethodDefinition       def                                                   nextgroup=scalaMethodName                 skipwhite
+syn keyword scalaVariableDefinition     var                                                   nextgroup=scalaVariableName               skipwhite
+syn keyword scalaValueDefinition        val                                                   nextgroup=scalaValueName                  skipwhite
+syn match   scalaMethodName             "\([a-z][A-Za-z0-9_]*\|[+*/-]\)"            contained nextgroup=scalaMethodParamsDefinition     skipwhite
+syn match   scalaVariableName           "[A-Za-z]\@<![a-z][A-Za-z]*\(_[A-Za-z]\)\?" contained
+syn match   scalaValueName              "[A-Za-z][A-Za-z]*\(_[A-Za-z]\)\?"          contained
+syn match   scalaMethodParamsDefinition "([^:]\+:[^,\)]\+\(,[^:]\+:[^,\)]\+\)*)"    contained contains=scalaClassName,scalaFullyQualifiedImport,scalaClassSpecializer,scalaVariableName skipwhite
 syn match   scalaAnonymousValue         "_\*\?"
 syn match   scalaSymbol                 "'[a-z][A-Za-z_]*\(\s\)\@="
 
