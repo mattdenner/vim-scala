@@ -27,13 +27,13 @@ hi link scalaMapImports            Identifier
 hi link scalaMap                   Keyword
 
 "" Syntax for class, object and traits
-syn keyword scalaType             type                                       nextgroup=scalaClassName        skipwhite
-syn keyword scalaClass            class                                      nextgroup=scalaClassName        skipwhite
-syn keyword scalaObject           object                                     nextgroup=scalaClassName        skipwhite
-syn keyword scalaTrait            trait                                      nextgroup=scalaClassName        skipwhite
-syn keyword scalaExtend           extends                                    nextgroup=scalaClassName        skipwhite
-syn match   scalaClassName        "[^\s\.a-z]\zs\([A-Z][a-z]*\)\+"           nextgroup=scalaClassSpecializer skipwhite
-syn region  scalaClassSpecializer start="\[" end="\]"              contained contains=scalaClassName
+syn keyword scalaType             type                                                 nextgroup=scalaClassName        skipwhite
+syn keyword scalaClass            class                                                nextgroup=scalaClassName        skipwhite
+syn keyword scalaObject           object                                               nextgroup=scalaClassName        skipwhite
+syn keyword scalaTrait            trait                                                nextgroup=scalaClassName        skipwhite
+syn keyword scalaExtend           extends                                              nextgroup=scalaClassName        skipwhite
+syn match   scalaClassName        "[^\s\.a-z]\zs[A-Z][0-9a-z]*\([0-9]*[A-Z][a-z]*\)*"  nextgroup=scalaClassSpecializer skipwhite
+syn region  scalaClassSpecializer start="\[" end="\]" contained contains=scalaClassName
 
 hi link scalaType             Keyword
 hi link scalaClass            Keyword
