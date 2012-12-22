@@ -80,6 +80,7 @@ syn keyword scalaValidation  require
 syn keyword scalaValidation  assert
 syn keyword scalaRange       to
 syn keyword scalaRange       until
+syn keyword scalaKeyword     yield
 
 hi link scalaConditional Conditional
 hi link scalaRepeat      Repeat
@@ -150,6 +151,7 @@ syn match   scalaNumber      "\(0x\x\+\|0\o\+\|0[lL]\?\|\(\<\|-\)[1-9]\d*[lL]\?\
 syn match   scalaFloat       "-\?\d\+\.\d\+"
 syn match   scalaArrow       "\s\zs\(<-\|=>\)\(\s\)\@="
 syn match   scalaAttributed  "@[^\s]+"
+syn keyword scalaNull        null
 syn keyword scalaBoolean     true
 syn keyword scalaBoolean     false
 syn keyword scalaException   try
@@ -158,6 +160,7 @@ syn keyword scalaException   finally
 syn keyword scalaException   throw
 
 hi link scalaArrow      Keyword
+hi link scalaNull       Keyword
 hi link scalaOperator   Operator
 hi link scalaComparator Operator
 hi link scalaBoolean    Boolean
