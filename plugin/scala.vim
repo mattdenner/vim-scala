@@ -86,5 +86,17 @@ autocmd BufRead,BufNewFile *.scala call scala#open()
 autocmd BufDelete          *.scala call scala#close()
 autocmd BufWritePost       *.scala call scala#test()
 
-autocmd BufNewFile,BufRead *.scala set filetype=scala
-autocmd BufNewFile,BufRead *.sbt   set filetype=scala
+"" Ensure that the filetype is correctly identified (duplicated in ftdetect/scala.vim)
+autocmd BufNewFile,BufRead *.scala                 set filetype=scala
+autocmd BufNewFile,BufRead *Spec.scala,*Test.scala set filetype=scalatest syntax=scala
+autocmd BufNewFile,BufRead *.sbt                   set filetype=scala
+
+"" Ensure that snipMate support is configured, which doesn't require the
+"" plugin to actually be installed.
+if !exists('g:snipMate')
+  let g:snipMate = {}
+endif
+if !get(g:snipMate, 'scope_aliases')
+  let g:snipMate.scope_aliases = {}
+endif
+let g:snipMate.scope_aliases['scalatest'] = 'scala,scalatest'
