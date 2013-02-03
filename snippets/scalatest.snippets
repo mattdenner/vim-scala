@@ -4,12 +4,16 @@
 
 # For dealing with scalatest stuff
 snippet spec
-	class ${1}Spec extends org.scalatest.FunSpec {
+	class ${1:`Filename()`} extends org.scalatest.FunSpec {
+	  describe("$1") {
+		${2}
+	  }
 	}
 
 snippet desc
 	describe("${1}") {
+	  ${2}
 	}
 
 snippet it
-	it("${1}") { pending }
+	it("${1}") { ${2:pending} }

@@ -88,8 +88,9 @@ autocmd BufWritePost       *.scala call scala#test()
 
 "" Ensure that the filetype is correctly identified (duplicated in ftdetect/scala.vim)
 autocmd BufNewFile,BufRead *.scala                 set filetype=scala
-autocmd BufNewFile,BufRead *Spec.scala,*Test.scala set filetype=scalatest syntax=scala
+autocmd BufNewFile,BufRead *Spec.scala,*Test.scala set filetype=scalatest
 autocmd BufNewFile,BufRead *.sbt                   set filetype=scala
+autocmd FileType           scalatest               set syntax=scala
 
 "" Ensure that snipMate support is configured, which doesn't require the
 "" plugin to actually be installed.
