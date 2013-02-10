@@ -2,6 +2,35 @@
 # Scala snippets #
 ##################
 
-# For general scala code
+# Case class
+snippet case
+	case class ${1:Name}(${2})
+
+# For comprehension
+snippet for
+	for (
+	  ${1:v <- s}
+	) yield ${2:v}
+
+# Type class
+snippet typeclass
+	import annotation.implicitNotFound
+	@implicitNotFound("No member of type class $1 in scope for ${T}")
+	sealed trait ${1:NameW}[T] {
+	  def foo(a:T): T
+	}
+	object $1 {
+	  implicit object ${2:Something}$1 extends $1[$2] {
+			def foo(a:$2): $2
+	  }
+	}
+
+##############################################################################################
+# Scalaz stuff!
+##############################################################################################
 snippet scalaz
 	import scalaz._, Scalaz._
+
+snippet assertable
+	implicit val ${1:Type}Equal: Equal[$1] = equalBy(_.${2:value})
+	implicit val $1Show: Show[$1] = showBy(_.$2)
