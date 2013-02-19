@@ -33,7 +33,7 @@ syn keyword scalaObject           object                                        
 syn keyword scalaTrait            trait                                                  nextgroup=scalaClassName        skipwhite
 syn keyword scalaExtend           extends                                                nextgroup=scalaClassName        skipwhite
 syn match   scalaClassName        "[^\s\.a-z0-9]\zs[A-Z][0-9a-z]*\([0-9]*[A-Z][a-z]*\)*" nextgroup=scalaClassSpecializer skipwhite
-syn region  scalaClassSpecializer start="\[" end="\]" contained contains=scalaClassName
+syn region  scalaClassSpecializer start="\[" end="\]" contained contains=scalaClassName,scalaAnonymousValue
 
 hi link scalaType             Keyword
 hi link scalaClass            Keyword
