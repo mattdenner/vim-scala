@@ -149,7 +149,7 @@ syn match   scalaOperator    "\s\zs\(++\|##\)\(\s\)\@="
 syn match   scalaComparator  "\s\zs\(==\|!=\|<=\?\|>=\?\)\(\s\)\@="
 syn match   scalaNumber      "\(0x\x\+\|0\o\+\|0[lL]\?\|\(\<\|-\)[1-9]\d*[lL]\?\)"
 syn match   scalaFloat       "-\?\d\+\.\d\+"
-syn match   scalaArrow       "\s\zs\(<-\|=>\)\(\s\)\@="
+syn match   scalaArrow       "\s\zs\(<-\|=>\|\%u21d2\)\(\s\)\@="
 syn match   scalaAttributed  "@[^\s]+"
 syn keyword scalaNull        null
 syn keyword scalaBoolean     true

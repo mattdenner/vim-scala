@@ -57,9 +57,10 @@ function! ScalaIndent()
   "" If the previous line starts a multiline comment then the indent is one.
   "" If it's a continuation of the multiline comment then the indent remains
   "" the same.  If the previous line is the end of a multiline comment then
-  "" reduce the indent by one.
-  let commentstart = match(previousline, '/\*')
-  let commentend   = match(previousline, '\*/')
+  "" reduce the indent by one.  And if it's just a single line comment
+  "" simply readjust in-and-then-out.
+  let commentstart = match(previousline, '/\*\|//')
+  let commentend   = match(previousline, '\*/\|//')
   if commentstart != -1
     let indent = indent + 1
   end
