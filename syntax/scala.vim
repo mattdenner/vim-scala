@@ -40,6 +40,8 @@ syn match scalaKeyword "\(=>\|<-\|<:\|>:\|::\)"
 syn match scalaKeyword "[+-]" nextgroup=scalaTypeVariant
 
 syn match scalaType "\W\zs[A-Z][A-Za-z0-9]*"
+syn region scalaAnonymousType start="({" end="})" nextgroup=scalaRef
+syn match scalaRef "#" contained nextgroup=scalaTypeVariant
 syn match scalaTypeVariant "[A-Z][A-Za-z0-9]*" contained
 syn match scalaParameter "[a-z][A-Za-z0-9]*\(:\)\@="
 syn match scalaValue "[A-Za-z][A-Za-z0-9]*" contained
@@ -64,6 +66,7 @@ hi link scalaComment Comment
 hi link scalaString String
 hi link scalaCharacter String
 hi link scalaMethod Function
+hi link scalaRef Keyword
 
 syn sync fromstart
 
