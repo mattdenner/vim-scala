@@ -15,6 +15,8 @@ syn keyword scalaKeyword case class
 syn keyword scalaKeyword trait
 syn keyword scalaKeyword object
 syn keyword scalaKeyword type
+syn keyword scalaKeyword sealed
+syn keyword scalaKeyword final
 syn keyword scalaKeyword new
 syn keyword scalaKeyword def nextgroup=scalaMethod skipwhite
 syn keyword scalaKeyword for
