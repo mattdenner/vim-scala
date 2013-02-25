@@ -56,6 +56,7 @@ syn match scalaMethod "[a-z][A-Za-z0-9]*" contained
 syn match scalaComment "//.*"
 syn region scalaComment start="/\*" end="\*/"
 
+syn match scalaString '""'
 syn region scalaString start=*"[^"]* skip=*\\"* end=*"*
 syn region scalaString start=*"""* end=*"""*
 syn region scalaCharacter start="'" skip="\\'" end="'"
