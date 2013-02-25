@@ -34,6 +34,7 @@ syn keyword scalaKeyword private
 syn keyword scalaKeyword this
 syn keyword scalaKeyword super
 syn keyword scalaKeyword override
+syn keyword scalaKeyword lazy
 
 syn keyword scalaBadKeyword var
 syn keyword scalaBadKeyword null
