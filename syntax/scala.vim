@@ -27,6 +27,8 @@ syn keyword scalaKeyword else
 syn keyword scalaKeyword yield
 syn keyword scalaKeyword implicit
 syn keyword scalaKeyword implicitly
+syn keyword scalaKeyword extends
+syn keyword scalaKeyword with
 
 syn keyword scalaKeyword private
 syn keyword scalaKeyword this
