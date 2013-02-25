@@ -25,10 +25,13 @@ syn keyword scalaKeyword val nextgroup=scalaValue skipwhite
 syn keyword scalaKeyword if
 syn keyword scalaKeyword else
 syn keyword scalaKeyword yield
+syn keyword scalaKeyword implicit
+syn keyword scalaKeyword implicitly
 
 syn keyword scalaKeyword private
 syn keyword scalaKeyword this
 syn keyword scalaKeyword super
+syn keyword scalaKeyword override
 
 syn keyword scalaBadKeyword var
 syn keyword scalaBadKeyword null

@@ -12,6 +12,12 @@ snippet for
 	  ${1:v <- s}
 	) yield ${2:v}
 
+# Match
+snippet match
+	${1:v} match {
+	  case ${2} => ${3}
+	}
+
 # Type class
 snippet typeclass
 	import annotation.implicitNotFound

@@ -12,53 +12,77 @@ setlocal indentexpr=ScalaIndent()
 setlocal indentkeys=0{,0},0),!^F,<>>,o,O,e,=case,<CR>
 setlocal autoindent
 
-"" Calculates the indent based on the previous non-blank line and the current
-"" line when looking for parentheses.
-function! scala#indentBasedOn(prevlnum, curlnum, openparen, closeparen)
-  let indent = 0
-  let previousline = getline(a:prevlnum)
-  let currentline = getline(a:curlnum)
+function! scala#bracketIndent(lnum, openparen, closeparen)
+  let currentline = getline(a:lnum)
+  let currentopens  = strlen(currentline)-strlen(substitute(currentline, a:openparen, "", "g"))
+  let currentcloses = strlen(currentline)-strlen(substitute(currentline, a:closeparen, "", "g"))
+  return currentopens - currentcloses
+endfunction
 
-  let previousopen = match(previousline, a:openparen)
-  if previousopen != -1
-    let previousclose = match(previousline, a:closeparen)
-    if previousclose == -1 || previousopen > previousclose
-      let indent = indent + &shiftwidth
-    endif
+function! scala#countedBracketIndent(prevlnum, curlnum, openparen, closeparen)
+  let indent = scala#bracketIndent(a:prevlnum, a:openparen, a:closeparen)
+  let currentIndent = scala#bracketIndent(a:curlnum, a:openparen, a:closeparen)
+  if currentIndent < 0
+    let indent = indent + currentIndent
   endif
-
-  let currentclose = match(currentline, a:closeparen)
-  if currentclose != -1
-    let currentopen = match(currentline, a:openparen)
-    if currentopen == -1 || currentopen > currentclose
-      let indent = indent - &shiftwidth
-    endif
-  endif
-
   return indent
 endfunction
 
-function! ScalaIndent()
+function! scala#uncountedBracketIndent(prevlnum, curlnum, openparen, closeparen)
+  let indent = 0
+  let balance = scala#bracketIndent(a:prevlnum, a:openparen, a:closeparen)
+  if balance > 0
+    let indent = indent + 1
+  elseif balance < 0
+    let indent = indent - 1
+  end
+
+  let balance = scala#bracketIndent(a:curlnum,  a:openparen, a:closeparen)
+  if balance > 0
+    let indent = indent + 1
+  elseif balance < 0
+    let indent = indent - 1
+  end
+  return indent
+endfunction
+
+function! scala#internalIndent()
   "" If we're at the top of the file then the indent is automatically 0
   let prevlnum = prevnonblank(v:lnum - 1)
   if prevlnum == 0
     return 0
   endif
 
-  let indent = indent(prevlnum)
+  "" If we're closing a block then look to find the opening.  The indent is then the same
+  "" as the opening.
+  let closebracepos = match(getline(v:lnum), '}')
+  if closebracepos != -1
+    call cursor(v:lnum, closebracepos+1) " Position on the brace for correct matching
+    let matchline = searchpair('{', '', '}', 'bW')
+    if matchline > 0
+      return indent(matchline) / &shiftwidth
+    endif
+  endif
+
+  let indent = indent(prevlnum) / &shiftwidth
   let previousline = getline(prevlnum)
+  if match(previousline, "}\s*$") != -1
+    return indent
+  endif
 
-  "" Indent based on the block markers, which can be either code blocks,
-  "" parameters, or lists.
-  let indent = indent + scala#indentBasedOn(prevlnum, v:lnum, '{', '}')
-  let indent = indent + scala#indentBasedOn(prevlnum, v:lnum, '(', ')')
-  let indent = indent + scala#indentBasedOn(prevlnum, v:lnum, '[', ']')
+  "" If the previous line is an assignment we indent.
+  if match(previousline, "=\s*$") != -1
+    return indent + 1
+  elseif match(getline(prevlnum-1), "=\s*$") != -1
+    return indent(prevlnum-1) / &shiftwidth
+  endif
 
-  "" If the previous line starts a multiline comment then the indent is one.
-  "" If it's a continuation of the multiline comment then the indent remains
-  "" the same.  If the previous line is the end of a multiline comment then
-  "" reduce the indent by one.  And if it's just a single line comment
-  "" simply readjust in-and-then-out.
+  "" Indent based on the block markers, which can be either code blocks, parameters, or lists.
+  let indent = indent + scala#uncountedBracketIndent(prevlnum, v:lnum, '(', ')')
+  let indent = indent + scala#uncountedBracketIndent(prevlnum, v:lnum, '[', ']')
+  let indent = indent + scala#countedBracketIndent(prevlnum, v:lnum, '{', '}')
+
+  "" Handle the comments, either multiline or singular.
   let commentstart = match(previousline, '/\*\|//')
   let commentend   = match(previousline, '\*/\|//')
   if commentstart != -1
@@ -71,30 +95,19 @@ function! ScalaIndent()
     return indent
   endif
 
-  "" If we're closing a block then look to find the opening.  The indent is
-  "" then the same as the opening.
-  let closebracepos = match(getline(v:lnum), '}')
-  if closebracepos != -1
-    call cursor(v:lnum, closebracepos+1) " Position on the brace for correct matching
-    let matchline = searchpair('{', '', '}', 'bW')
-    if matchline > 0
-      return indent(matchline)
+  "" Match works as a block, but cases are levelly indented within it.
+  if match(previousline, '=>\s*$') != -1
+    let indent = indent + 1
+  else
+    if match(getline(v:lnum), '^\s*case\s\(class\)\@!') != -1
+      let previousIndent = indent(prevlnum) / &shiftwidth
+      if match(previousline, '\smatch\s*{') != -1
+        return previousIndent + 1
+      elseif match(previousline, '^\s*case\s\(class\)\@!') != -1
+        return previousIndent
+      endif
     endif
-  endif
-
-  "" Indentation for case is a little awkward!  Essentially 'case' is aligned
-  "" with each 'case', but indented by shiftwidth from the 'match'.  The hard
-  "" bit is to get the correct indentation level for the close of the 'match',
-  "" but searchpair to the rescue!
-  let previouscase = match(previousline, '^\s\+case\s')
-  let currentcase  = match(getline(v:lnum), '^\s\+case\s')
-  if previouscase != -1 && currentcase != -1
-    return indent       " case followed by case means no indentation change
-  elseif previouscase != -1 && match(previousline, '=>\s*$') != -1
-    let indent = indent + &shiftwidth
-  elseif currentcase != -1 && match(previousline, '\s\(\(match\|catch\)\s*{\|}\)') == -1
-    return indent - &shiftwidth
-  endif
+  end
 
   "" Single line looping.  Nothing complicated as it assumes that people
   "" aren't stupid enough to make a multiline single line loop without braces!
@@ -102,39 +115,20 @@ function! ScalaIndent()
   "" single & multiline loops!
   let loopmatch = '^\s*\(for\|while\|if\)\s*([^{]\+$'
   if match(getline(v:lnum-1), loopmatch) != -1
-    return indent + &shiftwidth
+    return indent + 1
   elseif match(getline(v:lnum-1), '^\s*else\s*$') != -1
-    return indent + &shiftwidth
+    return indent + 1
   else
     let loopline = prevnonblank(v:lnum - 1)
     while match(getline(loopline-1), loopmatch) != -1
-      let indent = indent(loopline-1)
+      let indent = indent(loopline-1) / &shiftwidth
       let loopline = loopline - 1
     endwhile
   endif
 
-  "" Ok, so maybe we're part of an assignment: either the value being
-  "" assigned or following one.  The following one can come after a block, so
-  "" we need to account for that too.
-  let assignmentlnum = prevlnum
-  let assignmentline = previousline
-  let matcher = "=\s*$"
-  " \(\s*else\|=\)\s*$"
-
-  let closebracepos = match(assignmentline, '}')
-  if closebracepos != -1
-    call cursor(assignmentlnum, closebracepos+1) " Position on the brace for correct matching
-    let matchline = searchpair('{', '', '}', 'bW')
-    if matchline > 0 && match(getline(matchline-1), matcher) != -1
-      let assignmentlnum = matchline
-      let assignmentline = getline(assignmentlnum)
-    endif
-  endif
-  if match(assignmentline, matcher) != -1
-    return indent + &shiftwidth
-  elseif match(getline(assignmentlnum-1), matcher) != -1
-    return indent(assignmentlnum-1)
-  endif
-
   return indent
+endfunction
+
+function! ScalaIndent()
+  return scala#internalIndent() * &shiftwidth
 endfunction
