@@ -55,10 +55,11 @@ autocmd BufNewFile,BufRead *.sbt                   set filetype=scala
 
 "" Setup some leader mappings so that we can drive SBT easily
 autocmd FileType scala,scalatest nmap <leader>ss :call VimuxRunCommand('sbt')<cr>
-autocmd FileType scala,scalatest nmap <leader>ssc <leader>ss<leader>sc
-autocmd FileType scala,scalatest nmap <leader>sC :call VimuxCloseRunner()<cr>
+autocmd FileType scala,scalatest nmap <leader>ssC <leader>ss<leader>sC
+autocmd FileType scala,scalatest nmap <leader>sd :call VimuxCloseRunner()<cr>
+autocmd FileType scala,scalatest nmap <leader>sc :call VimuxRunCommand('compile')<cr>
 autocmd FileType scala,scalatest nmap <leader>st :call VimuxRunCommand('test')<cr>
-autocmd FileType scala,scalatest nmap <leader>sc :call VimuxRunCommand('console')<cr>
+autocmd FileType scala,scalatest nmap <leader>sC :call VimuxRunCommand('console')<cr>
 autocmd FileType scala,scalatest vmap <leader>se :call scala#executeInSbt()<cr>
 autocmd FileType scala           nmap <leader>sp :call scala#openCompanionFile('companionOfSource')<cr>
 autocmd FileType scalatest       nmap <leader>sp :call scala#openCompanionFile('companionOfTest')<cr>
