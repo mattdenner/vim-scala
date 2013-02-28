@@ -40,3 +40,13 @@ snippet scalaz
 snippet assertable
 	implicit val ${1:Type}Equal: Equal[$1] = equalBy(_.${2:value})
 	implicit val $1Show: Show[$1] = showBy(_.$2)
+
+##############################################################################################
+# Spray stuff!
+##############################################################################################
+snippet json
+	import spray.json.{JsonFormat, JsValue, deserializationError}
+	implicit val ${1:TypeJson} = new RootJsonFormat[${2:Type}] {
+	  def write(resource: $2):JsValue = ${3:???}
+	  def read(value: JsValue):$2 = deserializationError("unsupported")
+	}

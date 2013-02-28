@@ -45,7 +45,7 @@ function! scala#executeInSbt() range
   let lines         = getline(lnum1, lnum2)
   let lines[-1]     = lines[-1][: col2 - 2]
   let lines[0]      = lines[0][col1 - 1:]
-  call VimuxRunCommand(join(lines, "\n"), 0)
+  call VimuxRunCommand(":paste\n".join(lines, "\n")."\n\04", 0)
 endfunction
 
 "" Ensure that the filetype is correctly identified (duplicated in ftdetect/scala.vim)
