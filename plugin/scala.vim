@@ -7,89 +7,50 @@ let g:loaded_scala_md=1
 let g:scalaVimuxWindowOpen=0
 let g:scalaVimuxOpening=0
 
-"" Identifies the companion file that should be opened alongside the current
-"" buffer.  It says what action should be taken ('split' or 'new'), the
-"" direction in which to do this ('botleft' or 'botright'), the filename.
-function! scala#identifyCompanionFile()
-  let scala#companionMapping={
-    \ 'main': {'substitute': 'test', 'direction': 'botright', 'replacements': [''],                    'extensions': ['Test', 'Spec', 'Suite'] },
-    \ 'test': {'substitute': 'main', 'direction': 'topleft',  'replacements': ['Test','Spec','Suite'], 'extensions': [''] }
-    \ }
-
-  for [key, mapping] in items(scala#companionMapping)
-    let scalaRoot=substitute(bufname('%'), key, mapping['substitute'], '')
-    if (scalaRoot != bufname('%'))
-      for extension in mapping['extensions']
-        for replacement in mapping['replacements']
-          let filename=substitute(scalaRoot, replacement.'\.scala', extension.'.scala', '')
-          if (filereadable(filename))
-            return ['split', mapping['direction'], filename]
-          endif
-        endfor
-      endfor
-
-      return ['new', mapping['direction'], substitute(scalaRoot, '\.scala', 'Test.scala', '')]
-    endif
-  endfor
-
-  return ['new', 'botright', 'foo']
-endfunction
-
 "" Opens the companion file in an appropriate split.
-function! scala#openCompanionFile()
-  if (g:scalaVimuxOpening == 0)
-    let g:scalaVimuxOpening=1
-    let testFileDetails=scala#identifyCompanionFile()
-    exec testFileDetails[1] ' v' . testFileDetails[0] testFileDetails[2]
-    let g:scalaVimuxOpening=0
-  endif
-endfunction
+function! scala#openCompanionFile(name)
+  let handler = [ function("scala#".a:name."Mapper"), function("scala#".a:name."Open") ]
 
-"" Opens a Vimux window with the sbt session started
-function! scala#openSbt()
-  if (g:scalaVimuxWindowOpen == 0)
-    call VimuxRunCommand('sbt')
-  endif
-  let g:scalaVimuxWindowOpen=g:scalaVimuxWindowOpen+1
-endfunction
-
-"" Opens a vimux terminal with 'sbt' running in it and ensures that there is a 
-"" test file, either creating a new one or opening the existing one in a
-"" separate pane.
-function! scala#open()
-  call scala#openSbt()
-""  call scala#openCompanionFile()
-endfunction
-
-"" Closes the vimux terminal if there are no more scala files open.
-function! scala#close()
-  let g:scalaVimuxWindowOpen=g:scalaVimuxWindowOpen-1
-  if (g:scalaVimuxWindowOpen == 0)
-    call VimuxCloseRunner()
-  endif
-endfunction
-
-"" Execute any tests associated with the current buffer.
-function! scala#test()
-  if (g:scalaVimuxWindowOpen > 0)
-    let testFileDetails=scala#identifyCompanionFile()
-    if (testFileDetails[0] == 'split')
-      call VimuxRunCommand('test')
+  let filename = handler[0](bufname('%'))
+  if filename == bufname('%')
+    return
+  elseif bufnr(filename) == -1
+    if filereadable(filename)
+      let x = handler[1]('split', filename)
+    else
+      let x = handler[1]('new', filename)
     endif
+  else
+    "" Buffer already exists!
   endif
 endfunction
 
-"" Ensure creating new Scala buffers, or opening existing files, opens an sbt
-"" session, and that closing them closes that session.  If the buffer is saved
-"" try to execute the tests that are associated with it.
-autocmd BufRead,BufNewFile *.scala call scala#open()
-autocmd BufDelete          *.scala call scala#close()
-autocmd BufWritePost       *.scala call scala#test()
+function! scala#companionOfSourceMapper(sourceFilename)
+  return substitute(substitute(a:sourceFilename, 'main', 'test', ''), '\.scala', 'Test.scala', '')
+endfunction
+function! scala#companionOfSourceOpen(action, testFilename)
+  exec 'botright' 'v'.a:action a:testFilename
+endfunction
+
+function! scala#companionOfTestMapper(testFilename)
+  return substitute(substitute(a:testFilename, 'test', 'main', ''), 'Test\.scala', '.scala', '')
+endfunction
+function! scala#companionOfTestOpen(action, sourceFilename)
+  exec 'topleft' 'v'.a:action a:sourceFilename
+endfunction
 
 "" Ensure that the filetype is correctly identified (duplicated in ftdetect/scala.vim)
 autocmd BufNewFile,BufRead *.scala                 set filetype=scala
 autocmd BufNewFile,BufRead *Spec.scala,*Test.scala set filetype=scalatest syntax=scala
 autocmd BufNewFile,BufRead *.sbt                   set filetype=scala
+
+"" Setup some leader mappings so that we can drive SBT easily
+autocmd FileType scala,scalatest nmap <leader>ss :call VimuxRunCommand('sbt')<cr>
+autocmd FileType scala,scalatest nmap <leader>sC :call VimuxCloseRunner()<cr>
+autocmd FileType scala,scalatest nmap <leader>st :call VimuxRunCommand('test')<cr>
+autocmd FileType scala,scalatest nmap <leader>sc :call VimuxRunCommand('console')<cr>
+autocmd FileType scala           nmap <leader>sp :call scala#openCompanionFile('companionOfSource')<cr>
+autocmd FileType scalatest       nmap <leader>sp :call scala#openCompanionFile('companionOfTest')<cr>
 
 "" Ensure that snipMate support is configured, which doesn't require the
 "" plugin to actually be installed.
