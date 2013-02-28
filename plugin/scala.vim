@@ -39,6 +39,15 @@ function! scala#companionOfTestOpen(action, sourceFilename)
   exec 'topleft' 'v'.a:action a:sourceFilename
 endfunction
 
+function! scala#executeInSbt() range
+  let [lnum1, col1] = getpos("'<")[1:2]
+  let [lnum2, col2] = getpos("'>")[1:2]
+  let lines         = getline(lnum1, lnum2)
+  let lines[-1]     = lines[-1][: col2 - 2]
+  let lines[0]      = lines[0][col1 - 1:]
+  call VimuxRunCommand(join(lines, "\n"), 0)
+endfunction
+
 "" Ensure that the filetype is correctly identified (duplicated in ftdetect/scala.vim)
 autocmd BufNewFile,BufRead *.scala                 set filetype=scala
 autocmd BufNewFile,BufRead *Spec.scala,*Test.scala set filetype=scalatest syntax=scala
@@ -46,9 +55,11 @@ autocmd BufNewFile,BufRead *.sbt                   set filetype=scala
 
 "" Setup some leader mappings so that we can drive SBT easily
 autocmd FileType scala,scalatest nmap <leader>ss :call VimuxRunCommand('sbt')<cr>
+autocmd FileType scala,scalatest nmap <leader>ssc <leader>ss<leader>sc
 autocmd FileType scala,scalatest nmap <leader>sC :call VimuxCloseRunner()<cr>
 autocmd FileType scala,scalatest nmap <leader>st :call VimuxRunCommand('test')<cr>
 autocmd FileType scala,scalatest nmap <leader>sc :call VimuxRunCommand('console')<cr>
+autocmd FileType scala,scalatest vmap <leader>se :call scala#executeInSbt()<cr>
 autocmd FileType scala           nmap <leader>sp :call scala#openCompanionFile('companionOfSource')<cr>
 autocmd FileType scalatest       nmap <leader>sp :call scala#openCompanionFile('companionOfTest')<cr>
 
