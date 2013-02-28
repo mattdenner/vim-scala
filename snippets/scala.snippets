@@ -45,8 +45,9 @@ snippet assertable
 # Spray stuff!
 ##############################################################################################
 snippet json
-	import spray.json.{JsonFormat, JsValue, deserializationError}
-	implicit val ${1:TypeJson} = new RootJsonFormat[${2:Type}] {
-	  def write(resource: $2):JsValue = ${3:???}
-	  def read(value: JsValue):$2 = deserializationError("unsupported")
+	implicit object ${1:TypeJson} extends spray.json.${2:Root}JsonFormat[${3:Type}] {
+	  import spray.json.{JsValue, deserializationError}
+
+	  def write(resource: $3):JsValue = ${4:???}
+	  def read(value: JsValue):$3 = deserializationError("unsupported")
 	}
