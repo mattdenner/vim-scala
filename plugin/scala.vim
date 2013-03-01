@@ -63,6 +63,13 @@ autocmd FileType scala,scalatest nmap <leader>sC :call VimuxRunCommand('console'
 autocmd FileType scala,scalatest vmap <leader>se :call scala#executeInSbt()<cr>
 autocmd FileType scala           nmap <leader>sp :call scala#openCompanionFile('companionOfSource')<cr>
 autocmd FileType scalatest       nmap <leader>sp :call scala#openCompanionFile('companionOfTest')<cr>
+autocmd FileType scala,scalatest vmap <leader>sa=> :Align =><cr>
+autocmd FileType scala,scalatest vmap <leader>sa-> :Align -><cr>
+autocmd FileType scala,scalatest vmap <leader>sa=  :Align =<cr>
+
+"" How I want the scala file to be folded
+autocmd FileType scala,scalatest setlocal foldmethod=syntax           " Syntax folding
+autocmd FileType scala,scalatest setlocal foldlevelstart=4            " Any folds deeper than this will be closed
 
 "" Ensure that snipMate support is configured, which doesn't require the
 "" plugin to actually be installed.
