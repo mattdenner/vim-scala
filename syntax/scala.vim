@@ -54,7 +54,7 @@ syn match scalaTypeVariant "[A-Z][A-Za-z0-9]*" contained
 syn match scalaParameter "[a-z][A-Za-z0-9]*\(:\)\@="
 syn match scalaValue "[A-Za-z][A-Za-z0-9]*" contained
 
-syn match scalaMethod "[a-z][A-Za-z0-9]*" contained
+syn match scalaMethod "[A-Za-z][A-Za-z0-9]*" contained
 
 syn match scalaComment "//.*"
 syn region scalaComment start="/\*" end="\*/"
