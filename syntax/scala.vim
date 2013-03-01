@@ -44,12 +44,14 @@ syn keyword scalaBadKeyword null
 syn keyword scalaBoolean true
 syn keyword scalaBoolean false
 
-syn match scalaKeyword "\(=>\|<-\|<:\|>:\|::\)"
-syn match scalaKeyword "[+-]" nextgroup=scalaTypeVariant
+syn match scalaKeyword "\(=>\|->\|<-::\)"
 
-syn match scalaType "\W\zs[A-Z][A-Za-z0-9]*"
+syn match scalaType "\W\zs[A-Z][A-Za-z0-9]*" nextgroup=scalaGenerics
+syn region scalaGenerics start="\[" end="\]" contains=scalaAnonymousType,scalaTypeVariance,scalaType
 syn region scalaAnonymousType start="({" end="})" nextgroup=scalaRef
 syn match scalaRef "#" contained nextgroup=scalaTypeVariant
+syn match scalaTypeVariance "[+-]" contained nextgroup=scalaTypeVariant
+syn match scalaTypeVariance "<:\|>:\|:" contained nextgroup=scalaTypeVariant
 syn match scalaTypeVariant "[A-Z][A-Za-z0-9]*" contained
 syn match scalaParameter "[a-z][A-Za-z0-9]*\(:\)\@="
 syn match scalaValue "[A-Za-z][A-Za-z0-9]*" contained
@@ -68,6 +70,7 @@ hi link scalaKeyword Keyword
 hi link scalaBadKeyword Error
 hi link scalaBoolean Boolean
 hi link scalaType Type
+hi link scalaTypeVariance scalaKeyword
 hi link scalaTypeVariant scalaType
 hi link scalaParameter Constant
 hi link scalaValue Constant
